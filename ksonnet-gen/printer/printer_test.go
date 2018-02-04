@@ -38,6 +38,7 @@ func TestFprintf(t *testing.T) {
 		{name: "index_with_index"},
 		{name: "array"},
 		{name: "self_apply"},
+		{name: "declarations"},
 
 		// errors
 		{name: "unknown_node", isErr: true},
@@ -486,6 +487,33 @@ var (
 			},
 		},
 		"self_apply": &ast.Apply{Target: &ast.Self{}},
+		"declarations": &ast.Local{
+			Binds: ast.LocalBinds{
+				ast.LocalBind{
+					Variable: *newIdentifier("a"),
+					Body: &ast.Import{
+						File: &ast.LiteralString{
+							Kind:  ast.StringDouble,
+							Value: "a",
+						},
+					},
+				},
+			},
+			Body: &ast.Local{
+				Binds: ast.LocalBinds{
+					ast.LocalBind{
+						Variable: *newIdentifier("b"),
+						Body: &ast.Import{
+							File: &ast.LiteralString{
+								Kind:  ast.StringDouble,
+								Value: "b",
+							},
+						},
+					},
+				},
+				Body: &ast.Object{},
+			},
+		},
 
 		// errors
 		"unknown_node":           &noopNode{},

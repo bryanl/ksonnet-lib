@@ -159,6 +159,8 @@ func (p *printer) print(n interface{}) {
 			p.writeString(" else ")
 			p.print(t.BranchFalse)
 		}
+	case *ast.Import:
+		p.print(t.File)
 	case *ast.Index:
 		id, err := indexID(t)
 		if err != nil {
@@ -169,6 +171,22 @@ func (p *printer) print(n interface{}) {
 		p.writeString(id)
 		p.writeString(".")
 		p.print(t.Target)
+	case *ast.Local:
+		p.writeString("local ")
+
+		for _, bind := range t.Binds {
+			p.writeString(string(bind.Variable))
+			p.writeString(" = ")
+			p.print(bind.Body)
+			p.writeString(";")
+			p.writeByte(newline, 1)
+		}
+		p.print(t.Body)
+		// p.writeString(string(*t.Id))
+		// p.addMethodSignature(t)
+		// p.writeString(" = ")
+		// p.print(t.Expr2)
+
 	case *ast.Object:
 		p.writeString("{")
 
