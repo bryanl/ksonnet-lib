@@ -456,11 +456,6 @@ var _ Noder = (*Call)(nil)
 func NewCall(method string) *Call {
 	parts := strings.Split(method, ".")
 
-	for i := 0; i < len(parts)/2; i++ {
-		j := len(parts) - i - 1
-		parts[i], parts[j] = parts[j], parts[i]
-	}
-
 	return &Call{
 		parts: parts,
 	}
@@ -475,7 +470,7 @@ func (c *Call) Node() ast.Node {
 		return NewVar(c.parts[0]).Node()
 	}
 
-	for i := 0; i < len(c.parts)-1; i++ {
+	for i := len(c.parts) - 1; i > 0; i-- {
 		newIndex := &ast.Index{
 			Id: newIdentifier(c.parts[i]),
 		}
@@ -488,7 +483,7 @@ func (c *Call) Node() ast.Node {
 		}
 	}
 
-	cur.Target = NewVar(c.parts[len(c.parts)-1]).Node()
+	cur.Target = NewVar(c.parts[0]).Node()
 
 	return head
 }
