@@ -425,6 +425,14 @@ func NewApply(target Noder, args ...Noder) *Apply {
 
 // ApplyCall creates an Apply using a method string.
 func ApplyCall(method string, args ...Noder) *Apply {
+	parts := strings.Split(method, ".")
+	for i := 0; i < len(parts)/2; i++ {
+		j := len(parts) - i - 1
+		parts[i], parts[j] = parts[j], parts[i]
+	}
+
+	method = strings.Join(parts, ".")
+
 	return NewApply(NewCall(method), args...)
 }
 
@@ -466,13 +474,20 @@ func (c *Call) Node() ast.Node {
 	var head *ast.Index
 	var cur *ast.Index
 
-	if len(c.parts) == 1 {
-		return NewVar(c.parts[0]).Node()
+	parts := c.parts
+
+	for i := 0; i < len(parts)/2; i++ {
+		j := len(parts) - i - 1
+		parts[i], parts[j] = parts[j], parts[i]
 	}
 
-	for i := len(c.parts) - 1; i > 0; i-- {
+	if len(parts) == 1 {
+		return NewVar(parts[0]).Node()
+	}
+
+	for i := len(parts) - 1; i > 0; i-- {
 		newIndex := &ast.Index{
-			Id: newIdentifier(c.parts[i]),
+			Id: newIdentifier(parts[i]),
 		}
 		if head == nil {
 			head = newIndex
@@ -483,7 +498,7 @@ func (c *Call) Node() ast.Node {
 		}
 	}
 
-	cur.Target = NewVar(c.parts[0]).Node()
+	cur.Target = NewVar(parts[0]).Node()
 
 	return head
 }

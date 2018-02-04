@@ -72,6 +72,26 @@ func ExampleBinary() {
 	// }
 }
 
+func ExampleCall() {
+	o := NewObject()
+	k := NewKey("foo")
+
+	c := NewCall("a.b.c.d")
+
+	if err := o.Set(k, c); err != nil {
+		fmt.Printf("error: %#v\n", err)
+	}
+
+	if err := printer.Fprint(os.Stdout, o.Node()); err != nil {
+		fmt.Printf("error: %#v\n", err)
+	}
+
+	// Output:
+	// {
+	//   foo:: a.b.c.d,
+	// }
+}
+
 func ExampleObject() {
 	o := NewObject()
 
