@@ -121,7 +121,7 @@ func (p *printer) print(n interface{}) {
 
 	switch t := n.(type) {
 	default:
-		p.err = errors.Errorf("unknown node type: %v", n)
+		p.err = errors.Errorf("unknown node type: (%T) %v", n, n)
 		return
 	case *ast.Apply:
 		p.handleApply(t)
