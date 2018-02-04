@@ -39,6 +39,7 @@ func TestFprintf(t *testing.T) {
 		{name: "array"},
 		{name: "self_apply"},
 		{name: "declarations"},
+		{name: "chained_apply"},
 
 		// errors
 		{name: "unknown_node", isErr: true},
@@ -524,6 +525,29 @@ var (
 						},
 					},
 					Body: &ast.Object{},
+				},
+			},
+		},
+		"chained_apply": &ast.Apply{
+			Arguments: ast.Arguments{
+				Positional: ast.Nodes{
+					&ast.Var{Id: *newIdentifier("bar")},
+				},
+			},
+			Target: &ast.Index{
+				Id: newIdentifier("withBar"),
+				Target: &ast.Apply{
+					Arguments: ast.Arguments{
+						Positional: ast.Nodes{
+							&ast.Var{Id: *newIdentifier("foo")},
+						},
+					},
+					Target: &ast.Index{
+						Id: newIdentifier("withFoo"),
+						Target: &ast.Var{
+							Id: *newIdentifier("di"),
+						},
+					},
 				},
 			},
 		},

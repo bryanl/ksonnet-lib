@@ -349,13 +349,33 @@ func extractApply(n ast.Node) (string, error) {
 	switch t := n.(type) {
 	default:
 		return "", errors.Errorf("invalid type %T when extracting apply", t)
+	case *ast.Apply:
+		var args bytes.Buffer
+
+		for i, arg := range t.Arguments.Positional {
+			s, err := extractApply(arg)
+			if err != nil {
+				return "", errors.Wrap(err, "extract apply arugments")
+			}
+
+			args.WriteString(s)
+			if i != len(t.Arguments.Positional)-1 {
+				args.WriteString(", ")
+			}
+		}
+
+		s, err := extractApply(t.Target)
+		if err != nil {
+			return "", errors.Wrap(err, "extract apply in apply")
+		}
+		return fmt.Sprintf("%s(%s)", s, args.String()), nil
 	case *ast.Index:
 		var s string
 		if t.Target != nil {
 			var err error
 			s, err = extractApply(t.Target)
 			if err != nil {
-				return "", errors.Wrap(err, "extract apply")
+				return "", errors.Wrap(err, "extract apply in index")
 			}
 		}
 
