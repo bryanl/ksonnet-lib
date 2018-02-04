@@ -400,9 +400,9 @@ var (
 			Cond: &ast.Binary{
 				Left: &ast.Apply{
 					Target: &ast.Index{
-						Id: newIdentifier("std"),
+						Id: newIdentifier("type"),
 						Target: &ast.Var{
-							Id: *newIdentifier("type"),
+							Id: *newIdentifier("std"),
 						},
 					},
 					Arguments: ast.Arguments{
@@ -448,9 +448,9 @@ var (
 			Cond: &ast.Binary{
 				Left: &ast.Apply{
 					Target: &ast.Index{
-						Id: newIdentifier("std"),
+						Id: newIdentifier("type"),
 						Target: &ast.Var{
-							Id: *newIdentifier("type"),
+							Id: *newIdentifier("std"),
 						},
 					},
 					Arguments: ast.Arguments{
@@ -511,7 +511,22 @@ var (
 						},
 					},
 				},
-				Body: &ast.Object{},
+				Body: &ast.Local{
+					Binds: ast.LocalBinds{
+						ast.LocalBind{
+							Variable: *newIdentifier("c"),
+							Body: &ast.Apply{
+								Target: &ast.Index{
+									Id: newIdentifier("new"),
+									Target: &ast.Var{
+										Id: *newIdentifier("deployment"),
+									},
+								},
+							},
+						},
+					},
+					Body: &ast.Object{},
+				},
 			},
 		},
 
@@ -626,6 +641,27 @@ func Test_printer_err(t *testing.T) {
 
 	if len(p.output) != 0 {
 		t.Errorf("print() in error state should not add any output")
+	}
+}
+
+func Test_extractApply(t *testing.T) {
+	n := &ast.Apply{
+		Target: &ast.Index{
+			Id: newIdentifier("new"),
+			Target: &ast.Var{
+				Id: *newIdentifier("deployment"),
+			},
+		},
+	}
+
+	got, err := extractApply(n.Target)
+	if err != nil {
+		t.Fatalf("extractApply() returned unexpected error: %v", err)
+	}
+
+	expected := "deployment.new"
+	if got != expected {
+		t.Errorf("extractApply() = %s; expected = %s", got, expected)
 	}
 }
 

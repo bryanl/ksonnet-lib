@@ -1,4 +1,5 @@
 local a = "a";
 local b = "b";
+local c = deployment.new();
 {
 }

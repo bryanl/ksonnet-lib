@@ -182,11 +182,6 @@ func (p *printer) print(n interface{}) {
 			p.writeByte(newline, 1)
 		}
 		p.print(t.Body)
-		// p.writeString(string(*t.Id))
-		// p.addMethodSignature(t)
-		// p.writeString(" = ")
-		// p.print(t.Expr2)
-
 	case *ast.Object:
 		p.writeString("{")
 
@@ -368,7 +363,7 @@ func extractApply(n ast.Node) (string, error) {
 			return "", err
 		}
 
-		return fmt.Sprintf("%s.%s", id, s), nil
+		return fmt.Sprintf("%s.%s", s, id), nil
 	case *ast.Var:
 		return string(t.Id), nil
 	case *ast.Self:
