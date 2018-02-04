@@ -156,7 +156,7 @@ func Test_formatKind(t *testing.T) {
 
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			got := formatKind(tc.name)
+			got := FormatKind(tc.name)
 			require.Equal(t, tc.expected, got)
 		})
 	}
