@@ -340,7 +340,7 @@ func mixinField() *Object {
 
 func numberField() *Object {
 	o := NewObject()
-	t := NewNumber(1)
+	t := NewInt(1)
 	k := InheritedKey("foo")
 	o.Set(k, t)
 	return o
@@ -563,7 +563,8 @@ var (
 					Hide: ast.ObjectFieldInherit,
 					Kind: ast.ObjectFieldID,
 					Expr2: &ast.LiteralNumber{
-						Value: 1,
+						Value:          1,
+						OriginalString: "1",
 					},
 				},
 			},
@@ -789,8 +790,8 @@ func TestObject_Get(t *testing.T) {
 }
 
 func TestBinary_UnknownOperator(t *testing.T) {
-	left := NewNumber(1)
-	right := NewNumber(2)
+	left := NewInt(1)
+	right := NewInt(2)
 
 	b := NewBinary(left, right, BinaryOp("☃"))
 
