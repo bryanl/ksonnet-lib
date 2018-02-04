@@ -503,11 +503,9 @@ var (
 				Binds: ast.LocalBinds{
 					ast.LocalBind{
 						Variable: *newIdentifier("b"),
-						Body: &ast.Import{
-							File: &ast.LiteralString{
-								Kind:  ast.StringDouble,
-								Value: "b",
-							},
+						Body: &ast.LiteralString{
+							Kind:  ast.StringDouble,
+							Value: "b",
 						},
 					},
 				},

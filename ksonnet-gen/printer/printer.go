@@ -160,6 +160,7 @@ func (p *printer) print(n interface{}) {
 			p.print(t.BranchFalse)
 		}
 	case *ast.Import:
+		p.writeString("import ")
 		p.print(t.File)
 	case *ast.Index:
 		id, err := indexID(t)
