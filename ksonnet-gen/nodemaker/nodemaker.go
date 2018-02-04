@@ -456,6 +456,11 @@ var _ Noder = (*Call)(nil)
 func NewCall(method string) *Call {
 	parts := strings.Split(method, ".")
 
+	for i := 0; i < len(parts)/2; i++ {
+		j := len(parts) - i - 1
+		parts[i], parts[j] = parts[j], parts[i]
+	}
+
 	return &Call{
 		parts: parts,
 	}

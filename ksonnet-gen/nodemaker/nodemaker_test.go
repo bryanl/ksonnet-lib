@@ -729,11 +729,11 @@ var (
 					Kind: ast.ObjectLocal,
 					Expr2: &ast.Apply{
 						Target: &ast.Index{
-							Id: newIdentifier("alpha"),
+							Id: newIdentifier("charlie"),
 							Target: &ast.Index{
 								Id: newIdentifier("beta"),
 								Target: &ast.Var{
-									Id: *newIdentifier("charlie"),
+									Id: *newIdentifier("alpha"),
 								},
 							},
 						},
