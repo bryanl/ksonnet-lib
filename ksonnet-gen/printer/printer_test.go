@@ -435,9 +435,17 @@ var (
 						Value: "a",
 						Kind:  ast.StringDouble,
 					},
-					Body: &ast.LiteralString{
-						Value: "a",
-						Kind:  ast.StringSingle,
+					Body: &ast.Local{
+						Binds: ast.LocalBinds{
+							{
+								Variable: ast.Identifier("$"),
+								Body:     &ast.Self{},
+							},
+						},
+						Body: &ast.LiteralString{
+							Value: "a",
+							Kind:  ast.StringSingle,
+						},
 					},
 				},
 			},

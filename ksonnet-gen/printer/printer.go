@@ -639,7 +639,15 @@ func (p *printer) handleDesugaredObjectField(f ast.DesugaredObjectField) {
 
 	p.writeString(fieldType)
 	p.writeByte(space, 1)
-	p.print(f.Body)
+
+	// body should be a local that contains the scope
+	local, ok := f.Body.(*ast.Local)
+	if !ok {
+		p.err = errors.New("desguared object field body should be a local")
+		return
+	}
+
+	p.print(local.Body)
 }
 
 func (p *printer) handleIndex(i *ast.Index) {
