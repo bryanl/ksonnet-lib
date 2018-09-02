@@ -35,6 +35,7 @@ func TestFprintf(t *testing.T) {
 		{name: "literal_with_single_quote"},
 		{name: "object_field_with_comment"},
 		{name: "object_field_trailing_comma"},
+		{name: "desugared_object"},
 		{name: "function_with_no_args"},
 		{name: "function_with_args"},
 		{name: "function_with_optional_args_ast"},
@@ -422,6 +423,21 @@ var (
 					},
 					Comment: &astext.Comment{
 						Text: "a comment",
+					},
+				},
+			},
+		},
+		"desugared_object": &ast.DesugaredObject{
+			Fields: []ast.DesugaredObjectField{
+				{
+					Hide: ast.ObjectFieldInherit,
+					Name: &ast.LiteralString{
+						Value: "a",
+						Kind:  ast.StringDouble,
+					},
+					Body: &ast.LiteralString{
+						Value: "a",
+						Kind:  ast.StringSingle,
 					},
 				},
 			},

@@ -301,6 +301,10 @@ func (p *printer) print(n interface{}) {
 		p.print(t.Right)
 	case *ast.Conditional:
 		p.handleConditional(t)
+	case *ast.DesugaredObject:
+		p.handleDesugaredObject(t)
+	case ast.DesugaredObjectField:
+		p.handleDesugaredObjectField(t)
 	case *ast.Dollar:
 		p.writeString("$")
 	case *ast.Error:
@@ -568,6 +572,74 @@ func (p *printer) writeComment(c *astext.Comment) {
 		p.writeString(strings.TrimSpace(line))
 		p.writeByte(newline, 1)
 	}
+}
+
+func (p *printer) handleDesugaredObject(t *ast.DesugaredObject) {
+	isSingleLine := p.isObjectSingleLine(t)
+	shouldPad := isSingleLine && p.cfg.PadObjects && len(t.Fields) > 0
+	needTrailingComma := !isSingleLine && len(t.Fields) > 0
+	p.writeString("{")
+	if shouldPad {
+		p.writeByte(space, 1)
+	}
+
+	for i, field := range t.Fields {
+		if !p.isObjectSingleLine(t) {
+			p.indentLevel++
+			p.writeByte(newline, 1)
+		}
+
+		p.print(field)
+		if i < len(t.Fields)-1 {
+			p.writeByte(comma, 1)
+			if p.isObjectSingleLine(t) {
+				p.writeByte(space, 1)
+			}
+		}
+
+		if !p.isObjectSingleLine(t) {
+			p.indentLevel--
+		}
+	}
+
+	if needTrailingComma {
+		p.writeByte(comma, 1)
+	}
+
+	// write an extra newline at the end
+	if !p.isObjectSingleLine(t) {
+		p.writeByte(newline, 1)
+	}
+
+	if shouldPad {
+		p.writeByte(space, 1)
+	}
+	p.writeString("}")
+}
+
+func (p *printer) handleDesugaredObjectField(f ast.DesugaredObjectField) {
+	var fieldType string
+
+	switch f.Hide {
+	default:
+		p.err = errors.Errorf("unknown Hide type %#v", f.Hide)
+		return
+	case ast.ObjectFieldHidden:
+		fieldType = "::"
+	case ast.ObjectFieldVisible:
+		fieldType = ":::"
+	case ast.ObjectFieldInherit:
+		fieldType = ":"
+	}
+
+	p.print(f.Name)
+	if f.PlusSuper {
+		p.writeByte(syntaxSugar, 1)
+	}
+
+	p.writeString(fieldType)
+	p.writeByte(space, 1)
+	p.print(f.Body)
 }
 
 func (p *printer) handleIndex(i *ast.Index) {
@@ -985,6 +1057,12 @@ func (p *printer) isObjectSingleLine(i interface{}) bool {
 	switch t := i.(type) {
 	default:
 		return false
+	case *ast.DesugaredObject:
+		if len(t.Fields) == 0 {
+			return true
+		}
+
+		loc = t.NodeBase.Loc()
 	case *astext.Object:
 		if len(t.Fields) == 0 {
 			return true
