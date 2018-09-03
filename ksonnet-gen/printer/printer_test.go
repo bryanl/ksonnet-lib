@@ -37,6 +37,7 @@ func TestFprintf(t *testing.T) {
 		{name: "object_field_trailing_comma"},
 		{name: "object_with_field"},
 		{name: "desugared_object"},
+		{name: "desugared_object2"},
 		{name: "function_with_no_args"},
 		{name: "function_with_args"},
 		{name: "function_with_optional_args_ast"},
@@ -458,6 +459,37 @@ var (
 						Body: &ast.LiteralString{
 							Value: "a",
 							Kind:  ast.StringSingle,
+						},
+					},
+				},
+			},
+		},
+		"desugared_object2": &ast.DesugaredObject{
+			Fields: []ast.DesugaredObjectField{
+				{
+					Hide: 0,
+					Name: &ast.LiteralString{
+						Value: "fn",
+						Kind:  ast.StringDouble,
+					},
+					Body: &ast.Local{
+						Binds: ast.LocalBinds{
+							{
+								Variable: ast.Identifier("$"),
+								Body:     &ast.Self{},
+							},
+						},
+						Body: &ast.Function{
+							Parameters: ast.Parameters{
+								Required: ast.Identifiers{
+									ast.Identifier("x"),
+								},
+							},
+							Body: &ast.Array{
+								Elements: ast.Nodes{
+									&ast.Var{Id: ast.Identifier("x")},
+								},
+							},
 						},
 					},
 				},
